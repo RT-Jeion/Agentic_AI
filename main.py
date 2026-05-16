@@ -1,20 +1,30 @@
 import os
 import asyncio
 from contextlib import asynccontextmanager
+from dotenv import load_dotenv
+
 from fastapi import FastAPI, Request, BackgroundTasks, status
 from fastapi.responses import Response
+
 from aiogram import Bot, Dispatcher, types
 from aiogram.enums import ParseMode
+from aiogram.client.default import DefaultBotProperties
 
 # 1. Configuration & Secrets Loading
+load_dotenv()  # Required to read the .env file
+
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-WEBHOOK_URL = os.getenv("WEBHOOK_URL")  # e.g., https://your-codespace-url.github.dev/webhook
+WEBHOOK_URL = os.getenv("WEBHOOK_URL")  # e.g., https://your-codespace-url.github.dev
 
 if not TOKEN or not WEBHOOK_URL:
     raise ValueError("Missing essential environment variables: TELEGRAM_BOT_TOKEN or WEBHOOK_URL")
 
 # 2. Initialize Core Telegram Instances
-bot = Bot(token=TOKEN, parse_mode=ParseMode.HTML)
+# In aiogram 3.x+, parse_mode must be passed via DefaultBotProperties
+bot = Bot(
+    token=TOKEN, 
+    default=DefaultBotProperties(parse_mode=ParseMode.HTML)
+)
 dp = Dispatcher()
 
 # 3. Fast Ingestion Background Worker
@@ -25,8 +35,8 @@ async def process_agent_rag_pipeline(message_dict: dict):
     it won't block Telegram's HTTP handshake.
     """
     try:
-        # Cast the raw dict back into an aiogram Message object
-        message = types.Message(**message_dict)
+        # Pydantic v2 native way to rebuild the object safely
+        message = types.Message.model_validate(message_dict)
         chat_id = message.chat.id
         user_text = message.text
 
@@ -77,7 +87,9 @@ async def telegram_webhook_router(request: Request, background_tasks: Background
     try:
         # Pull raw JSON update structure from request
         raw_update = await request.json()
-        update = types.Update(**raw_update)
+        
+        # Pydantic v2 native way to validate the incoming dictionary
+        update = types.Update.model_validate(raw_update)
         
         # We only care about text messages for this current setup
         if update.message and update.message.text:
