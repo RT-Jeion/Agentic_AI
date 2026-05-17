@@ -56,7 +56,7 @@ def main():
     print("🚀 Bot listener is running safely... Send your file from Termux!")
     
     # Run the polling thread (blocks until Ctrl+C is pressed)
-    application.run_polling(allowed_updates=Update.ALL)
+    application.run_polling(allowed_updates=Update.ALL_TYPES)
 
 if __name__ == "__main__":
     main()
