@@ -1,4 +1,5 @@
 import os
+import json
 from dotenv import load_dotenv
 from aiogram import Bot, Dispatcher, Router, types
 from aiogram.enums import ParseMode
@@ -25,7 +26,24 @@ router = Router()
 @router.message(Command("start"))
 async def handle_start_command(message: types.Message):
     """Listens for the structural /start command."""
-    user_name = message.from_user.first_name if message.from_user else "Developer"
+    user = message.from_user
+        
+    user_text = message.text
+    user_id = user.id
+    first_name = user.first_name
+    last_name = user.last_name
+    username = user.username
+    language_code = user.language_code
+    is_premium = user.is_premium
+    
+    with open("users.json", "r") as file:
+        users = json.load(file)
+    
+    users[user_id] = {
+        "User Name": username,
+        "First Name": first_name
+    }
+
     await message.answer(f"👋 Hello {user_name}! Your FastAPI + aiogram Webhook Gateway is running flawlessly.")
 
 # --- RAW TEXT MESSAGE HANDLER ---
