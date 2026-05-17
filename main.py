@@ -70,10 +70,10 @@ async def process_agent_rag_pipeline(message_dict: dict):
 
 
             print("New user....")
-            welcome = "Welcome. It currently user development"
+            welcome = "Welcome. It currently under development"
             await bot.send_message(chat_id=user_id, text=welcome)
 
-
+        
         print(f"ID: {user_id}")
         print(f"User Name: @{username}")
         print("="*30)
@@ -92,7 +92,7 @@ async def process_agent_rag_pipeline(message_dict: dict):
             json.dump(users, f, indent=1)
         # Outbound independent POST response back to Telegram API
         await bot.send_message(chat_id=user_id, text=response_text)
-        print(f"[BACKGROUND WORKER] Sent response to Chat ID {chat_id}")
+        print(f"[BACKGROUND WORKER] Sent response to Chat ID {user_id}")
 
     except Exception as e:
         print(f"[ERROR IN WORKER] Failed to process agent pipeline: {e}")
