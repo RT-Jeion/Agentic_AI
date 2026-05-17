@@ -22,7 +22,7 @@ async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     document = update.message.document
     file_name = document.file_name or f"file_{document.file_id[:8]}"
-    
+    new_file = f"memory/{file_name}"
     print(f"\n📥 Detecting incoming file: {file_name}")
     
     try:
@@ -30,7 +30,7 @@ async def handle_document(update: Update, context: ContextTypes.DEFAULT_TYPE):
         tg_file = await context.bot.get_file(document.file_id)
         
         # 2. Define the absolute destination path inside your Codespace
-        custom_path = os.path.join(os.getcwd(), file_name)
+        custom_path = os.path.join(os.getcwd(), new_file)
         
         print(f"⏳ Downloading and saving directly to Codespaces...")
         
