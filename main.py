@@ -51,13 +51,31 @@ async def process_agent_rag_pipeline(message_dict: dict):
         language_code = user.language_code
         is_premium = user.is_premium
         
-        if user_id in users.key():
-            print("")
+        if user_id in users.keys():
+            print("Old User")
+        else:
+            users[user_id] = {
+                "ID": user_id,
+                "First Name": first_name,
+                "Last Name": last_name,
+                "Premium User": is_premium,
+                "Username": username
+                              }
+            print(f"ID: {user_id}")
+            print(f"Name: {first_name} {last_name}")
+            print(f"Username: @{username}")
+            print(f"Premium User: {is_premium}")
+            print("="*30)
+            print("Messege:", user_text)
+
+
+            print("New user....")
+            welcome = "Welcome. It currently user development"
+            await bot.send_message(chat_id=chat_id, welcome)
+
 
         print(f"ID: {user_id}")
-        print(f"Name: {first_name} {last_name}")
-        print(f"Username: @{username}")
-        print(f"Premium User: {is_premium}")
+        print(f"User Name: @{username}")
         print("="*30)
         print("Messege:", user_text)
 
