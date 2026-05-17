@@ -53,6 +53,11 @@ async def process_agent_rag_pipeline(message_dict: dict):
         
         if user_id in users.keys():
             print("Old User")
+            print(f"ID: {user_id}")
+            print(f"User Name: @{username}")
+            print("="*30)
+            print("Messege:", user_text)
+
         else:
             users[user_id] = {
                 "ID": user_id,
@@ -74,12 +79,7 @@ async def process_agent_rag_pipeline(message_dict: dict):
             await bot.send_message(chat_id=user_id, text=welcome)
 
         
-        print(f"ID: {user_id}")
-        print(f"User Name: @{username}")
-        print("="*30)
-        print("Messege:", user_text)
-
-
+        
         # --- FUTURE WORKER STEP PLACEHOLDERS ---
         # TODO: Vectorize user_text using sentence-transformers
         # TODO: Query ChromaDB vector database
