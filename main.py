@@ -1,5 +1,6 @@
 import os
 import asyncio
+import json
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 
@@ -35,12 +36,31 @@ async def process_agent_rag_pipeline(message_dict: dict):
     it won't block Telegram's HTTP handshake.
     """
     try:
+        with open("users.json", "r") as f:
+            users = json.load(f)
+
         # Pydantic v2 native way to rebuild the object safely
         message = types.Message.model_validate(message_dict)
-        chat_id = message.chat.id
+        # Extract these fields inside your process_agent_rag_pipeline function
+        user = message.from_user
         user_text = message.text
+        user_id = user.id
+        first_name = user.first_name
+        last_name = user.last_name
+        username = user.username
+        language_code = user.language_code
+        is_premium = user.is_premium
+        
+        if user_id in users.key():
+            print("")
 
-        print(f"[BACKGROUND WORKER] Processing message from Chat ID {chat_id}: '{user_text}'")
+        print(f"ID: {user_id}")
+        print(f"Name: {first_name} {last_name}")
+        print(f"Username: @{username}")
+        print(f"Premium User: {is_premium}")
+        print("="*30)
+        print("Messege:", user_text)
+
 
         # --- FUTURE WORKER STEP PLACEHOLDERS ---
         # TODO: Vectorize user_text using sentence-transformers
@@ -48,9 +68,10 @@ async def process_agent_rag_pipeline(message_dict: dict):
         # TODO: Pass context to your LangChain Agent loop
         
         # Simulating heavy Agent/LLM processing time (e.g., 3 seconds)
-        await asyncio.sleep(3) 
-        response_text = f"🤖 Agent response to: <i>{user_text}</i>\n\n(RAG processing mock complete!)"
-        
+        await asyncio.sleep(1)
+        response_text = f"{user_text} too......."
+        with open("users.json", "w") as f:
+            json.dump(users, f, indent=1)
         # Outbound independent POST response back to Telegram API
         await bot.send_message(chat_id=chat_id, text=response_text)
         print(f"[BACKGROUND WORKER] Sent response to Chat ID {chat_id}")
