@@ -71,7 +71,7 @@ async def process_agent_rag_pipeline(message_dict: dict):
 
             print("New user....")
             welcome = "Welcome. It currently user development"
-            await bot.send_message(chat_id=chat_id, welcome)
+            await bot.send_message(chat_id=chat_id, text=welcome)
 
 
         print(f"ID: {user_id}")
