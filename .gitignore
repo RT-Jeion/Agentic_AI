@@ -19,7 +19,8 @@ pyvenv.cfg
 chroma_db/
 *.db
 *.sqlite3
-
+memory/
+images/
 # === Machine Learning & Embedding Cache ===
 # Prevents uploading heavy downloaded HuggingFace models
 .cache/
