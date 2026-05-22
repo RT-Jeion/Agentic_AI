@@ -108,4 +108,4 @@ async def msg_handle(message: types.Message) -> None:
     user_check(message.chat)
     
     await message.bot.send_chat_action(chat_id=message.chat.id, action="typing")
-    await message.answer_photo(FSInputFile("images/monkey_middle.jpg"), caption="Wait.. It's under development..and you got caught in aizen plan.. for the very start...")
+    await message.answer(message.text)
