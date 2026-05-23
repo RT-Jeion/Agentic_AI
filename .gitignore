@@ -23,6 +23,7 @@ memory/
 images/
 users/
 users.json
+
 # === Machine Learning & Embedding Cache ===
 # Prevents uploading heavy downloaded HuggingFace models
 .cache/
