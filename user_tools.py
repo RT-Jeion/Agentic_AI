@@ -1,98 +1,70 @@
-import json
 from datetime import  datetime
-import os
-from pathlib import Path
+from pymongo import MongoClient
+
 
 def user_check(user, text, reply):
 
+    #creating database (Mongodb)
+    client = MongoClient("mongodb://localhost:27017")
+    db = client["telegram_db"]
+
+    # all users data collection
+    all_users_db = db['all_users_info']
+
+
     # users info
-    user_id = str(user.id)
-    user_name = str(user.username)
+    user_id = int(user.id)
+    username = user.username
     name = user.full_name
-    location = f"users/{user_name}.json"
+    db_name = name
 
     #time
     now = datetime.now()
     date = now.strftime("%d %b, %Y")
     time = now.strftime("%I:%M:%S %p, %A")
     
-    # loads users.json
-    try:
-        with open("users.json", "r") as usr:
-            print("[System]: Loading Users data from users.json")
-            users = json.load(usr)
-            print("[System]: Successfully Users data loaded...")
+    # creating per user collection
+    #per user collection
+    user_db = db[db_name]
 
-    except (json.JSONDecodeError, OSError):
-        print("[System]: users.json not found.. empty list passed...")
-        users = {}
+    user_info = dict({
+        "_id": user_id,
+        "User Name": username,
+        "Full Name": name,
+        "Bot Started": {
+            "Date": date,
+            "Time": time
+        },
+        "Database Name":db_name
+    })
 
-    # loads users dir....
-    users_dir = Path("users")
+    user_chat_count = user_db.count_documents({})
 
-    if not os.path.exists(users_dir):
-        print(f"[System]: Existing {users_dir} dir Not Found. Creating new dir...")
-        users_dir.mkdir(parents=True, exist_ok=True)
 
-    try:
-        with open(location) as f:
-            print(f"[System]: {user_name}'s chats data loading from {location}")
-            chats = json.load(f)
-            print("Chats Successfully loaded....")
-    except:
-        print(f"[System]: Cannot find {location}")
-        chats = []
-
-    chat = {
-        "Date": date,
+    user_chat = {
+        "_id": user_chat_count + 1,
         "Time": time,
+        "Date": date,
         "Message": text,
         "Reply": reply
     }
-    chats.append(chat)
+    print("="*30)
+    print(f"{username} Messaged.....")
+    print('User ID:', user_id)
+    print("Name:", name)
+    print("Message:", text)
+    print("Replied:", reply)
 
-    # write to users chats
-    try:
-        with open(location, 'w') as f:
-            print("Writting to:", location)
-            json.dump(chats, f, indent=1)
-            print("Successfully written...")
-    except OSError:
-        print("Falled to write", location)
+    user_db.insert_one(user_chat)
+    print(f"User's Chat updated.\nDatabase Name: [{db_name}]")
 
-
-    if user_id in users:
-        print("User Name:", user_name)
-        print("User Already exists.....")
-        print("user Text:", text)
-        print("System Reply:", reply)
-
+    user_exist = all_users_db.find_one({"_id": user_id})
+    if user_exist:
+        print("User Already Existed.....")
         return False
 
-
-    print("New user found....")
-    print(f"User name: {user_name}")
-    print("Full Name:", name)
-    print("user Text:", text)
-    print("System Reply:", reply)
-
-    users[user_id] = {
-        "User Name": user_name,
-        "Full Name": name,
-        "Location": location,
-        "Started": {
-            "Date": date,
-            "Time": time
-        }
-    }
-
-    try:
-        with open("users.json", 'w') as usr:
-            print("Writing to: users.json")
-            
-            json.dump(users, usr, indent=1)
-            print("Successfully written")
-    except OSError:
-        print("Failed to write users.json")
-
+    print("It's a New User..")
+    all_users_db.insert_one(user_info)
+    print("New User's info added to ['all_users_info'] database")
     return True
+    

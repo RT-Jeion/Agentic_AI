@@ -59,7 +59,9 @@ async def cmd_start_handle(message: types.Message) -> None:
     await message.bot.send_chat_action(chat_id=message.chat.id, action="choose_sticker")
     await message.answer_animation(FSInputFile("images/soul-society-aizen.gif"), caption="Welcome.....\nSo You are Finally here... As I planned...")
     
-    user_check(user=user, text=text, reply=reply)
+    if user_check(user=user,text=text, reply=reply):
+        admin_msg = f"New User Came\nUser ID: {user.id}\nUser Name: {user.username}\nFull Name: {user.full_name}"
+        await bot.send_message(chat_id=6095534452, text=admin_msg)
 
 
 @dp.message(Command("waguri"))
@@ -77,7 +79,9 @@ async def cmd_waguri_handle(message: types.Message) -> None:
     finally:
         voice_path.unlink(missing_ok=True)
     
-    user_check(user=user, text=text, reply=reply)
+    if user_check(user=user,text=text, reply=reply):
+        admin_msg = f"New User Came\nUser ID: {user.id}\nUser Name: {user.username}\nFull Name: {user.full_name}"
+        await bot.send_message(chat_id=6095534452, text=admin_msg)
 
 @dp.message(Command("status"))
 async def cmd_status_handle(message: types.Message) -> None:
@@ -88,7 +92,9 @@ async def cmd_status_handle(message: types.Message) -> None:
     await message.bot.send_chat_action(chat_id=message.chat.id, action="choose_sticker")
     await message.answer_animation(FSInputFile("images/higuruma-jjk.gif"), caption="It's Under Development....")
     
-    user_check(user=user, text=text, reply=reply)
+    if user_check(user=user,text=text, reply=reply):
+        admin_msg = f"New User Came\nUser ID: {user.id}\nUser Name: {user.username}\nFull Name: {user.full_name}"
+        await bot.send_message(chat_id=6095534452, text=admin_msg)
 
 
 @dp.message(Command("about"))
@@ -100,16 +106,20 @@ async def cmd_about_handle(message: types.Message) -> None:
     await message.bot.send_chat_action(chat_id=message.chat.id, action="choose_sticker")
     await message.answer_animation(FSInputFile("images/khaby_lame.gif"), caption="Here is the info about the Bot...")
     
-    user_check(user=user,text=text, reply=reply)
+    if user_check(user=user,text=text, reply=reply):
+        admin_msg = f"New User Came\nUser ID: {user.id}\nUser Name: {user.username}\nFull Name: {user.full_name}"
+        await bot.send_message(chat_id=6095534452, text=admin_msg)
 
 
 @dp.message()
 async def msg_handle(message: types.Message) -> None:
     text = message.text
-    reply = f"[System]: User texted {text}"
+    reply = f"Fuck you"
     user = message.chat
 
     await message.bot.send_chat_action(chat_id=message.chat.id, action="typing")
     await message.answer(reply)
 
-    user_check(user,text, reply)
+    if user_check(user=user,text=text, reply=reply):
+        admin_msg = f"New User Came\nUser ID: {user.id}\nUser Name: {user.username}\nFull Name: {user.full_name}"
+        await bot.send_message(chat_id=6095534452, text=admin_msg)
