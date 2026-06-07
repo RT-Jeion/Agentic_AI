@@ -2,6 +2,7 @@ import os
 import subprocess
 import tempfile
 from pathlib import Path
+from llm import call_llm
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -114,7 +115,8 @@ async def cmd_about_handle(message: types.Message) -> None:
 @dp.message()
 async def msg_handle(message: types.Message) -> None:
     text = message.text
-    reply = f"Fuck you"
+    # reply = call_llm(str(text))
+    reply = "You  are single"
     user = message.chat
 
     await message.bot.send_chat_action(chat_id=message.chat.id, action="typing")
@@ -122,4 +124,7 @@ async def msg_handle(message: types.Message) -> None:
 
     if user_check(user=user,text=text, reply=reply):
         admin_msg = f"New User Came\nUser ID: {user.id}\nUser Name: {user.username}\nFull Name: {user.full_name}"
+        await bot.send_message(chat_id=6095534452, text=admin_msg)
+    else:
+        admin_msg = f"{user.full_name} Messaged.\nMessage: {text}"
         await bot.send_message(chat_id=6095534452, text=admin_msg)
