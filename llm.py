@@ -1,4 +1,5 @@
 import os
+import asyncio
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
@@ -7,7 +8,7 @@ from google.genai import types
 load_dotenv()
 api = os.getenv("GEMINI_API_KEY")
 # Initialize the client (it automatically looks for GEMINI_API_KEY in the environment)
-def call_llm(user_input):
+async def call_llm(user_input):
     client = genai.Client(api_key=api)
 
     # Define the system prompt
@@ -22,7 +23,6 @@ def call_llm(user_input):
         )
     )
 
-    print("Chatbot initialized! Type 'quit' to exit.\n")
         
     response = chat.send_message(user_input)
     print(f"Bot: {response.text}\n")

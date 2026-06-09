@@ -115,8 +115,7 @@ async def cmd_about_handle(message: types.Message) -> None:
 @dp.message()
 async def msg_handle(message: types.Message) -> None:
     text = message.text
-    # reply = call_llm(str(text))
-    reply = "You  are single"
+    reply = await call_llm(str(text))
     user = message.chat
 
     await message.bot.send_chat_action(chat_id=message.chat.id, action="typing")
