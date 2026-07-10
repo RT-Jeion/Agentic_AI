@@ -2,7 +2,7 @@ from datetime import  datetime
 from pymongo import MongoClient
 
 
-def user_check(user, text, reply):
+async def user_check(user, text, reply):
 
     #creating database (Mongodb)
     client = MongoClient("mongodb://localhost:27017")
@@ -18,6 +18,29 @@ def user_check(user, text, reply):
     name = user.full_name
     db_name = name
 
+    user = all_users_db.find_one({'_id': user_id})
+
+    if user:
+        if user["Database Name"] != db_name:
+            print("User Found. But Changed Name..")
+            print("Changing the DataBase Name")
+            user_db = db[user["Database Name"]]
+            user_db.rename(db_name, dropTarget=False)
+            
+            query_filter = {'_id': user_id}
+            query_update = {
+            "$set": {
+            "Database Name": db_name
+            }
+        }
+
+            result = all_users_db.update_one(query_filter, query_update)
+
+            print(f"Matched documents: {result.matched_count}")
+            print(f"Modified documents: {result.modified_count}")
+        
+
+
     #time
     now = datetime.now()
     date = now.strftime("%d %b, %Y")
@@ -27,16 +50,6 @@ def user_check(user, text, reply):
     #per user collection
     user_db = db[db_name]
 
-    user_info = dict({
-        "_id": user_id,
-        "User Name": username,
-        "Full Name": name,
-        "Bot Started": {
-            "Date": date,
-            "Time": time
-        },
-        "Database Name":db_name
-    })
 
     user_chat_count = user_db.count_documents({})
 
@@ -48,6 +61,7 @@ def user_check(user, text, reply):
         "Message": text,
         "Reply": reply
     }
+
     print("="*30)
     print(f"{username} Messaged.....")
     print('User ID:', user_id)
@@ -62,9 +76,20 @@ def user_check(user, text, reply):
     if user_exist:
         print("User Already Existed.....")
         return False
+    
+
+    user_info = dict({
+        "_id": user_id,
+        "User Name": username,
+        "Full Name": name,
+        "Bot Started": {
+            "Date": date,
+            "Time": time
+        },
+        "Database Name":db_name
+    })
 
     print("It's a New User..")
     all_users_db.insert_one(user_info)
     print("New User's info added to ['all_users_info'] database")
     return True
-    

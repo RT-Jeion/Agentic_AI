@@ -7,7 +7,14 @@ load_dotenv()
 
 api_key = os.getenv("GROQ_API_KEY")
 
-async def call_llm(user_input):
+async def call_llm(user_input, user):
+
+    # users info
+    user_id = int(user.id)
+    username = user.username
+    name = user.full_name
+    db_name = name
+
     client = Groq(api_key=api_key)
 
     # Define the system prompt
